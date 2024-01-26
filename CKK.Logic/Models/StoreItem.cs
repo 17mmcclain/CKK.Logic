@@ -31,7 +31,7 @@ namespace CKK.Logic.Models
             return _product;
         }
 
-        public Product SetProduct(Product product)
+        public void SetProduct(Product product)
         {
             _product = product;
         }
