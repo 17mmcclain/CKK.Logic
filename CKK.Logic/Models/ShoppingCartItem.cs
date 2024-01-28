@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -35,6 +36,12 @@ namespace CKK.Logic.Models
         public void SetProduct(Product product)
         {
             _product = product;
+        }
+
+        public decimal GetTotal()
+        {
+            Product product = new Product();
+            return _quantity * product.GetPrice();
         }
     }
 }
