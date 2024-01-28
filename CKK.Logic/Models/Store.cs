@@ -10,7 +10,7 @@ namespace CKK.Logic.Models
     public class Store
     {
         private int _id;
-        private string _name;
+        private string? _name;
         private Product _product1;
         private Product _product2;
         private Product _product3;
@@ -39,15 +39,15 @@ namespace CKK.Logic.Models
         {
             if (_product1 == null) 
             {
-                prod = _product1;
+                _product1 = prod;
             }
             else if (_product2 == null) 
             {
-                prod = _product2;
+                _product2 = prod;
             }
             else if (_product3 == null)
             {
-                prod = _product3;
+                _product3 = prod;
             }
         }
 
@@ -67,17 +67,17 @@ namespace CKK.Logic.Models
             }
         }
 
-        public Product GetStoreItem(int productNum)
+        public Product GetStoreItem(int productNumber)
         {
-            if (productNum == 1)
+            if (productNumber == 1)
             {
                 return _product1;
             }
-            else if (productNum == 2)
+            else if (productNumber == 2)
             {
                 return _product2;
             }
-            else if (productNum == 3)
+            else if (productNumber == 3)
             {
                 return _product3;
             }
@@ -89,15 +89,15 @@ namespace CKK.Logic.Models
 
         public Product FindStoreItemById(int id)
         {
-            if (_product1 != null && GetId() == id)
+            if (_product1 != null && 1 == id)
             {
                 return _product1;
             }
-            else if (_product2 != null && GetId() == id) 
+            else if (_product2 != null && 1 == id) 
             {
                 return _product2;
             }
-            else if (_product3 != null && GetId() == id)
+            else if (_product3 != null && 3 == id)
             {
                 return _product3;
             }
