@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CKK.Logic.Models
@@ -11,9 +13,10 @@ namespace CKK.Logic.Models
     {
         private int _id;
         private string? _name;
-        private Product _product1;
-        private Product _product2;
-        private Product _product3;
+        //private Product _product1;
+        //private Product _product2;
+        //private Product _product3;
+        private List<StoreItem> _items;
 
         public int GetId()
         {
@@ -35,20 +38,44 @@ namespace CKK.Logic.Models
             _name = name;
         }
 
-        public void AddStoreItem(Product prod)
+        public StoreItem AddStoreItem(Product prod, int quantity)
         {
-            if (_product1 == null) 
+            var notfounditem =
+                from e in _items
+                where GetStoreItem() == null
+                select e;
+
+            foreach (var item in notfounditem)
             {
-                _product1 = prod;
+                AddStoreItem(prod, quantity);
             }
-            else if (_product2 == null) 
+
+            var founditem =
+                from e in _items
+                where GetStoreItem() != null
+                select e;
+            
+            foreach (var item in founditem)
             {
-                _product2 = prod;
+                item.SetQuantity(quantity);
+                return item.GetQuantity();
             }
-            else if (_product3 == null)
-            {
-                _product3 = prod;
-            }
+
+
+
+
+            //if (_product1 == null) 
+            //{
+            //    _product1 = prod;
+            //}
+            //else if (_product2 == null) 
+            //{
+            //    _product2 = prod;
+            //}
+            //else if (_product3 == null)
+            //{
+            //    _product3 = prod;
+            //}
         }
 
         public void RemoveStoreItem(int productNum)
@@ -67,39 +94,21 @@ namespace CKK.Logic.Models
             }
         }
 
-        public Product GetStoreItem(int productNumber)
+        public List<StoreItem> GetStoreItem()
         {
-            if (productNumber == 1)
-            {
-                return _product1;
-            }
-            else if (productNumber == 2)
-            {
-                return _product2;
-            }
-            else if (productNumber == 3)
-            {
-                return _product3;
-            }
-            else
-            {
-                return null;
-            }
+            return _items;
         }
 
-        public Product FindStoreItemById(int id)
+        public StoreItem FindStoreItemById(int id)
         {
-            if (_product1 != null && 1 == id)
+            var returnedResult = 
+                from e in _items
+                where e.GetProduct().GetId() == id
+                select e;
+            
+            if (returnedResult.FirstOrDefault() != null)
             {
-                return _product1;
-            }
-            else if (_product2 != null && 1 == id) 
-            {
-                return _product2;
-            }
-            else if (_product3 != null && 3 == id)
-            {
-                return _product3;
+                return returnedResult.FirstOrDefault();
             }
             else
             {
