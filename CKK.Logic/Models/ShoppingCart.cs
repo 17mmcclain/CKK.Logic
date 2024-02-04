@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,9 +12,10 @@ namespace CKK.Logic.Models
     public class ShoppingCart
     {
         private Customer _customer;
-        private ShoppingCartItem _product1;
-        private ShoppingCartItem _product2;
-        private ShoppingCartItem _product3;
+        //private ShoppingCartItem _product1;
+        //private ShoppingCartItem _product2;
+        //private ShoppingCartItem _product3;
+        public List<ShoppingCartItem> _products;
 
         public ShoppingCart(Customer cust)
         {
@@ -26,22 +29,19 @@ namespace CKK.Logic.Models
 
         public ShoppingCartItem GetProductById(int id)
         {
-            if (_product1.GetProduct().GetId() == id)
-            {
-                return _product1;
-            }
+            var returnedwithId = 
+                from e in _products
+                where e.GetProduct().GetId() == id
+                select e;
 
-            else if (_product2.GetProduct().GetId() == id)
+            if (returnedwithId.FirstOrDefault() != null)
             {
-                return _product2;
+                return returnedwithId.FirstOrDefault();
             }
-
-            else if (_product3.GetProduct().GetId() == id)
+            else
             {
-                return _product3;
+                return null;
             }
-            return null;
-
         }
 
         public ShoppingCartItem AddProduct(Product prod, int quantity)
@@ -52,36 +52,28 @@ namespace CKK.Logic.Models
             }
             ShoppingCartItem cartItem = new ShoppingCartItem(prod, quantity);
 
-            if(_product1 == null) //no existing item
+            var emptyelementinitems =
+                from e in _products
+                where e == null
+                select e;
+
+            foreach (var element in emptyelementinitems)
             {
-                _product1 = cartItem;
-                return _product1;
-            }
-            if(_product2 == null)
-            {
-                _product2 = cartItem;
-                return _product2;
-            }
-            if (_product3 == null)
-            {
-                _product3 = cartItem;
-                return _product3;
+                return cartItem;
             }
 
-            if (_product1 != null && prod.GetId() == _product1.GetProduct().GetId()) //item exists and we change the quantity
+            var notemptyelementinitems = 
+                from e in _products
+                where e != null
+                select e;
+
+            foreach (var element in  notemptyelementinitems)
             {
-                _product1.SetQuantity(_product1.GetQuantity() + quantity);
-                return _product1;
-            }
-            if (_product2 != null && prod.GetId() == _product2.GetProduct().GetId()) //item exists and we change the quantity
-            {
-                _product2.SetQuantity(_product2.GetQuantity() + quantity);
-                return _product2;
-            }
-            if (_product2 != null && prod.GetId() == _product2.GetProduct().GetId()) //item exists and we change the quantity
-            {
-                _product3.SetQuantity(_product3.GetQuantity() + quantity);
-                return _product3;
+                if (element != null && prod.GetId() == element.GetProduct().GetId())
+                {
+                    element.SetQuantity(element.GetQuantity() + quantity);
+                    return element;
+                }
             }
             return null;
         }
@@ -98,72 +90,85 @@ namespace CKK.Logic.Models
             {
                 return null;
             }
-            
+
             //valid quantity given, enough available to remove, and matching ID
-            if (_product1 != null && quantity <= _product1.GetQuantity() && prod.GetId() == _product1.GetProduct().GetId())
+            var validquantitytoremove =
+                from e in _products
+                where e.GetQuantity() > 0 && e.GetQuantity() <= quantity
+                select e;
+
+            foreach (var element in validquantitytoremove)
             {
-                _product1.SetQuantity(_product1.GetQuantity() - quantity);
-                return _product1;
-            }
-            if (_product2 != null && quantity <= _product2.GetQuantity() && prod.GetId() == _product2.GetProduct().GetId())
-            {
-                _product2.SetQuantity(_product2.GetQuantity() - quantity);
-                return _product2;
-            }
-            if (_product3 != null && quantity <= _product3.GetQuantity() && prod.GetId() == _product3.GetProduct().GetId())
-            {
-                _product3.SetQuantity(_product3.GetQuantity() - quantity);
-                return _product3;
+                if (element.GetProduct().GetId() == prod.GetId()) 
+                { 
+                    element.SetQuantity(element.GetQuantity() - quantity);
+                    return element;
+                }
             }
 
-            //quantity > 0 given, but not enough to remove??
-            if (_product1 != null && quantity > _product1.GetQuantity() && prod.GetId() == _product1.GetProduct().GetId())
+            //valid quantity given, not enough to remove, matching ID
+            var notenoughtoremove =
+                from e in _products
+                where e.GetQuantity() < quantity
+                select e;
+
+            foreach (var element in notenoughtoremove)
             {
-                quantity = _product1.GetQuantity();
-                _product1.SetQuantity(_product1.GetQuantity() - quantity);
-                return _product1;
-            }
-            if (_product2 != null && quantity > _product2.GetQuantity() && prod.GetId() == _product2.GetProduct().GetId())
-            {
-                quantity = _product2.GetQuantity();
-                _product2.SetQuantity(_product2.GetQuantity() - quantity);
-                return _product2;
-            }
-            if (_product3 != null && quantity > _product3.GetQuantity() && prod.GetId() == _product3.GetProduct().GetId())
-            {
-                quantity = _product3.GetQuantity();
-                _product3.SetQuantity(_product3.GetQuantity() - quantity);
-                return _product3;
+                if (element.GetProduct().GetId() == prod.GetId())
+                {
+                    element.SetQuantity(0);
+                    return element;
+                }
             }
             return null;
         }
 
         public decimal GetTotal()
         {
-            decimal total;
-            total = _product1.GetTotal() + _product2.GetTotal() + _product3.GetTotal();
-            return total;   
+            decimal sum = 0;
+            var result =
+                from e in _products
+                where e.GetQuantity() > 0
+                select e;
+            foreach (var element in result)
+            {
+                sum += element.GetTotal();
+                return sum;
+            }
+            return 0;
         }
 
-        public ShoppingCartItem GetProduct(int prodNum)
+        public List<ShoppingCartItem> GetProduct()
         {
-            if (prodNum == 1)
+            var foundproducts = 
+                from e in _products     
+                where e != null
+                select e;
+            if (foundproducts.Any())
             {
-                return _product1;
+                List<ShoppingCartItem> listoffound = foundproducts.ToList();
+                return listoffound;
             }
-            else if (prodNum == 2)
-            {
-                return _product2;
-            }
-            else if (prodNum == 3)
-            {
-                return _product3;
-            }
-            else
-            {
-                return null;
-            }
-            
+            return null;
+
+
+            //if (prodNum == 1)
+            //{
+            //    return _product1;
+            //}
+            //else if (prodNum == 2)
+            //{
+            //    return _product2;
+            //}
+            //else if (prodNum == 3)
+            //{
+            //    return _product3;
+            //}
+            //else
+            //{
+            //    return null;
+            //}
+
         }
           
 

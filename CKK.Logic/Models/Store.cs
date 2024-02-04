@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -13,9 +14,6 @@ namespace CKK.Logic.Models
     {
         private int _id;
         private string? _name;
-        //private Product _product1;
-        //private Product _product2;
-        //private Product _product3;
         private List<StoreItem> _items;
 
         public int GetId()
@@ -40,63 +38,96 @@ namespace CKK.Logic.Models
 
         public StoreItem AddStoreItem(Product prod, int quantity)
         {
+            //no quantity given, means nothing to add.
+
+            if (quantity <=0)
+            {
+                return null;
+            }
+
+            //elements in _items that are empty, meaning prod and quantity need added
             var notfounditem =
                 from e in _items
-                where GetStoreItem() == null
+                where e == null
                 select e;
 
-            foreach (var item in notfounditem)
+            StoreItem item = new StoreItem(prod, quantity);
+
+            foreach (var element in notfounditem)
             {
-                AddStoreItem(prod, quantity);
+                return item;
             }
+
+            //elements in _items no empty, meaning quantity needs added to product elememt.
 
             var founditem =
                 from e in _items
-                where GetStoreItem() != null
+                where e != null
                 select e;
             
-            foreach (var item in founditem)
+            foreach (var element in founditem)
             {
-                item.SetQuantity(quantity);
-                return item.GetQuantity();
+                if (element != null && prod.GetId() == element.GetProduct().GetId())
+                {
+                    element.SetQuantity(element.GetQuantity() + quantity);
+                    return element;
+                }
             }
-
-
-
-
-            //if (_product1 == null) 
-            //{
-            //    _product1 = prod;
-            //}
-            //else if (_product2 == null) 
-            //{
-            //    _product2 = prod;
-            //}
-            //else if (_product3 == null)
-            //{
-            //    _product3 = prod;
-            //}
+            return null;
         }
 
-        public void RemoveStoreItem(int productNum)
+        public StoreItem RemoveStoreItem(int id, int quantity)
         {
-            if (productNum == 1)
+            if (quantity <= 0)
             {
-                _product1 = null;
+                return null;
             }
-            else if (productNum == 2) 
+
+            //valid quantity given, enough available to remove, and matching ID
+
+            var quantityvalid = 
+                from e in _items
+                where e.GetQuantity() > 0 && e.GetQuantity() <= quantity
+                select e;
+
+            foreach (var element in quantityvalid)
             {
-                _product2 = null;
+                if (element.GetProduct().GetId() == id)
+                {
+                    element.SetQuantity(element.GetQuantity() - quantity);
+                    return element;
+                }
             }
-            else if (productNum == 3)
+
+            //valid quantity given, but not enough to remove??
+
+            var itemsabovegivenquantity =
+                from e in _items
+                select e;
+
+            foreach (var element in itemsabovegivenquantity)
             {
-                _product3 = null;
+                if (element.GetProduct().GetId() == id)
+                {
+                    element.SetQuantity(0);
+                    return element;
+                }
             }
+            return null;
         }
 
         public List<StoreItem> GetStoreItem()
         {
-            return _items;
+            var foundproducts =
+                from e in _items
+                where e != null
+                select e;
+
+            if (foundproducts != null)
+            {
+                return foundproducts.ToList();
+            }
+            return null;
         }
 
         public StoreItem FindStoreItemById(int id)
