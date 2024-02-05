@@ -12,14 +12,12 @@ namespace CKK.Logic.Models
     public class ShoppingCart
     {
         private Customer _customer;
-        //private ShoppingCartItem _product1;
-        //private ShoppingCartItem _product2;
-        //private ShoppingCartItem _product3;
         public List<ShoppingCartItem> _products;
 
         public ShoppingCart(Customer cust)
         {
             _customer = cust;
+            _products = new List<ShoppingCartItem>();
         }
 
         public int GetCustomerId()
@@ -44,36 +42,25 @@ namespace CKK.Logic.Models
             }
         }
 
+      
         public ShoppingCartItem AddProduct(Product prod, int quantity)
         {
-            if(quantity <= 0)
+            if (quantity <= 0)
             {
                 return null;
             }
-            ShoppingCartItem cartItem = new ShoppingCartItem(prod, quantity);
+            ShoppingCartItem foundItem = GetProductById(prod.GetId());
 
-            var emptyelementinitems =
-                from e in _products
-                where e == null
-                select e;
-
-            foreach (var element in emptyelementinitems)
+            if (foundItem != null)
             {
-                return cartItem;
+                foundItem.SetQuantity(foundItem.GetQuantity() + quantity);
+                return foundItem;
             }
-
-            var notemptyelementinitems = 
-                from e in _products
-                where e != null
-                select e;
-
-            foreach (var element in  notemptyelementinitems)
+            else
             {
-                if (element != null && prod.GetId() == element.GetProduct().GetId())
-                {
-                    element.SetQuantity(element.GetQuantity() + quantity);
-                    return element;
-                }
+                ShoppingCartItem newItem = new ShoppingCartItem(prod, quantity);
+                _products.Add(newItem);
+                return newItem;
             }
             return null;
         }
@@ -83,7 +70,7 @@ namespace CKK.Logic.Models
             return AddProduct(prod, 1);
         }
 
-        public ShoppingCartItem RemoveProduct(Product prod, int quantity)
+        public ShoppingCartItem RemoveProduct(int id, int quantity)
         {
             //invalid quantity given
             if (quantity <= 0)
@@ -92,34 +79,38 @@ namespace CKK.Logic.Models
             }
 
             //valid quantity given, enough available to remove, and matching ID
-            var validquantitytoremove =
-                from e in _products
-                where e.GetQuantity() > 0 && e.GetQuantity() <= quantity
-                select e;
-
-            foreach (var element in validquantitytoremove)
+            if (quantity > 0)
             {
-                if (element.GetProduct().GetId() == prod.GetId()) 
-                { 
-                    element.SetQuantity(element.GetQuantity() - quantity);
-                    return element;
-                }
-            }
+                var validquantitytoremove =
+                    from e in _products
+                    where e.GetQuantity() >= quantity
+                    select e;
 
-            //valid quantity given, not enough to remove, matching ID
-            var notenoughtoremove =
-                from e in _products
-                where e.GetQuantity() < quantity
-                select e;
-
-            foreach (var element in notenoughtoremove)
-            {
-                if (element.GetProduct().GetId() == prod.GetId())
+                foreach (var element in validquantitytoremove)
                 {
-                    element.SetQuantity(0);
-                    return element;
+                    if (element.GetProduct().GetId() == id)
+                    {
+                        element.SetQuantity(element.GetQuantity() - quantity);
+                        return element;
+                    }
+                }
+
+                //valid quantity given, not enough to remove, matching ID
+                var notenoughtoremove =
+                    from e in _products
+                    where e.GetQuantity() > quantity
+                    select e;
+
+                foreach (var element in notenoughtoremove)
+                {
+                    if (element.GetProduct().GetId() == id)
+                    {
+                        element.SetQuantity(0);
+                        return element;
+                    }
                 }
             }
+
             return null;
         }
 
@@ -132,46 +123,15 @@ namespace CKK.Logic.Models
                 select e;
             foreach (var element in result)
             {
-                sum += element.GetTotal();
+                sum = sum + element.GetTotal();
                 return sum;
             }
             return 0;
         }
 
-        public List<ShoppingCartItem> GetProduct()
+        public List<ShoppingCartItem> GetProducts()
         {
-            var foundproducts = 
-                from e in _products     
-                where e != null
-                select e;
-            if (foundproducts.Any())
-            {
-                List<ShoppingCartItem> listoffound = foundproducts.ToList();
-                return listoffound;
-            }
-            return null;
-
-
-            //if (prodNum == 1)
-            //{
-            //    return _product1;
-            //}
-            //else if (prodNum == 2)
-            //{
-            //    return _product2;
-            //}
-            //else if (prodNum == 3)
-            //{
-            //    return _product3;
-            //}
-            //else
-            //{
-            //    return null;
-            //}
-
+            return _products;
         }
-          
-
-
     }
 }

@@ -12,11 +12,17 @@ namespace CKK.Tests
             ShoppingCart item = new ShoppingCart(test1);
             Product apples = new Product();
             int expected = 7;
+            var vari =
+                from e in item.GetProducts()
+                select e;
+
 
             //Act
             item.AddProduct(apples, 7);
-            int actual = item.GetProduct(1).GetQuantity();
-
+            foreach (var element in vari)
+            {
+                int actual = element;
+            }
             //Assert
 
             Assert.Equal(expected, actual);

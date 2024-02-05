@@ -14,7 +14,7 @@ namespace CKK.Logic.Models
     {
         private int _id;
         private string? _name;
-        private List<StoreItem> _items;
+        public List<StoreItem> _items = new List<StoreItem>();
 
         public int GetId()
         {
@@ -46,33 +46,23 @@ namespace CKK.Logic.Models
             }
 
             //elements in _items that are empty, meaning prod and quantity need added
-            var notfounditem =
-                from e in _items
-                where e == null
-                select e;
-
-            StoreItem item = new StoreItem(prod, quantity);
-
-            foreach (var element in notfounditem)
+            if (quantity > 0)
             {
-                return item;
-            }
+                StoreItem foundItem = FindStoreItemById(prod.GetId());
 
-            //elements in _items no empty, meaning quantity needs added to product elememt.
-
-            var founditem =
-                from e in _items
-                where e != null
-                select e;
-            
-            foreach (var element in founditem)
-            {
-                if (element != null && prod.GetId() == element.GetProduct().GetId())
+                if (foundItem != null)
                 {
-                    element.SetQuantity(element.GetQuantity() + quantity);
-                    return element;
+                    foundItem.SetQuantity(foundItem.GetQuantity() + quantity);
+                    return foundItem;
                 }
-            }
+
+                if (foundItem == null)
+                {
+                    StoreItem newItem = new StoreItem(prod, quantity);
+                    _items.Add(newItem);
+                    return newItem;
+                }
+            }  
             return null;
         }
 
@@ -87,7 +77,7 @@ namespace CKK.Logic.Models
 
             var quantityvalid = 
                 from e in _items
-                where e.GetQuantity() > 0 && e.GetQuantity() <= quantity
+                where e.GetQuantity() > 0 && e.GetQuantity() >= quantity
                 select e;
 
             foreach (var element in quantityvalid)
@@ -103,6 +93,7 @@ namespace CKK.Logic.Models
 
             var itemsabovegivenquantity =
                 from e in _items
+                where e.GetQuantity() < quantity 
                 select e;
 
             foreach (var element in itemsabovegivenquantity)
@@ -116,18 +107,9 @@ namespace CKK.Logic.Models
             return null;
         }
 
-        public List<StoreItem> GetStoreItem()
+        public List<StoreItem> GetStoreItems()
         {
-            var foundproducts =
-                from e in _items
-                where e != null
-                select e;
-
-            if (foundproducts != null)
-            {
-                return foundproducts.ToList();
-            }
-            return null;
+            return _items;
         }
 
         public StoreItem FindStoreItemById(int id)
@@ -141,11 +123,8 @@ namespace CKK.Logic.Models
             {
                 return returnedResult.FirstOrDefault();
             }
-            else
-            {
-                return null;
-            }
-
+            return null;
+            
         }
 
 
