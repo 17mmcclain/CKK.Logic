@@ -81,34 +81,49 @@ namespace CKK.Logic.Models
             //valid quantity given, enough available to remove, and matching ID
             if (quantity > 0)
             {
-                var validquantitytoremove =
-                    from e in _products
-                    where e.GetQuantity() >= quantity
-                    select e;
+                ShoppingCartItem foundItem = GetProductById(id);
 
-                foreach (var element in validquantitytoremove)
+                if (foundItem.GetQuantity() > quantity)
                 {
-                    if (element.GetProduct().GetId() == id)
-                    {
-                        element.SetQuantity(element.GetQuantity() - quantity);
-                        return element;
-                    }
+                    foundItem.SetQuantity(foundItem.GetQuantity() - quantity);
+                    return foundItem;
                 }
-
-                //valid quantity given, not enough to remove, matching ID
-                var notenoughtoremove =
-                    from e in _products
-                    where e.GetQuantity() > quantity
-                    select e;
-
-                foreach (var element in notenoughtoremove)
+                if (foundItem.GetQuantity() <= quantity)
                 {
-                    if (element.GetProduct().GetId() == id)
-                    {
-                        element.SetQuantity(0);
-                        return element;
-                    }
+                    quantity = foundItem.GetQuantity();
+                    foundItem.SetQuantity(foundItem.GetQuantity() - quantity);
+                    _products.Remove(foundItem);
+                    return foundItem;
                 }
+                //    var validquantitytoremove =
+                //        from e in _products
+                //        where e.GetQuantity() >= quantity
+                //        select e;
+
+                //    foreach (var element in validquantitytoremove)
+                //    {
+                //        if (element.GetProduct().GetId() == id)
+                //        {
+                //            element.SetQuantity(element.GetQuantity() - quantity);
+                //            return element;
+                //        }
+                //    }
+
+                //    //valid quantity given, not enough to remove, matching ID
+                //    var notenoughtoremove =
+                //        from e in _products
+                //        where e.GetQuantity() > quantity
+                //        select e;
+
+                //    foreach (var element in notenoughtoremove)
+                //    {
+                //        if (element.GetProduct().GetId() == id)
+                //        {
+                //            element.SetQuantity(0);
+                //            _products.Remove(element);
+                //            return element;
+                //        }
+                //    }
             }
 
             return null;
@@ -116,15 +131,12 @@ namespace CKK.Logic.Models
 
         public decimal GetTotal()
         {
-            decimal sum = 0;
-            var result =
+            var results =
                 from e in _products
-                where e.GetQuantity() > 0
-                select e;
-            foreach (var element in result)
+                select e.GetTotal();
+            foreach(var item in results)
             {
-                sum = sum + element.GetTotal();
-                return sum;
+                return results.Sum();
             }
             return 0;
         }
