@@ -9,11 +9,11 @@ namespace CKK.Logic.Interfaces
 {
     public abstract class InventoryItem
     {
-        public InventoryItem(Product product, int quantity) 
-        { 
-            Product = product;
-            Quantity = quantity;
-        }
+        //public InventoryItem(Product product, int quantity) 
+        //{ 
+        //    Product = product;
+        //    Quantity = quantity;
+        //}
         public Product Product { get; set; }
         public int Quantity {  get; set; }
     }
