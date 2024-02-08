@@ -22,14 +22,14 @@ namespace CKK.Logic.Models
 
         public int GetCustomerId()
         {
-            return _customer.GetId();
+            return _customer.Id;
         }
 
         public ShoppingCartItem GetProductById(int id)
         {
             var returnedwithId = 
                 from e in _products
-                where e.GetProduct().GetId() == id
+                where e.Product.Id == id
                 select e;
 
             if (returnedwithId.FirstOrDefault() != null)
@@ -49,11 +49,11 @@ namespace CKK.Logic.Models
             {
                 return null;
             }
-            ShoppingCartItem foundItem = GetProductById(prod.GetId());
+            ShoppingCartItem foundItem = GetProductById(prod.Id);
 
             if (foundItem != null)
             {
-                foundItem.SetQuantity(foundItem.GetQuantity() + quantity);
+                foundItem.Quantity = foundItem.Quantity + quantity;
                 return foundItem;
             }
             else
@@ -83,47 +83,19 @@ namespace CKK.Logic.Models
             {
                 ShoppingCartItem foundItem = GetProductById(id);
 
-                if (foundItem.GetQuantity() > quantity)
+                if (foundItem.Quantity > quantity)
                 {
-                    foundItem.SetQuantity(foundItem.GetQuantity() - quantity);
+                    foundItem.Quantity = foundItem.Quantity - quantity;
                     return foundItem;
                 }
-                if (foundItem.GetQuantity() <= quantity)
+                if (foundItem.Quantity <= quantity)
                 {
-                    quantity = foundItem.GetQuantity();
-                    foundItem.SetQuantity(foundItem.GetQuantity() - quantity);
+                    quantity = foundItem.Quantity;
+                    foundItem.Quantity = foundItem.Quantity - quantity;
                     _products.Remove(foundItem);
                     return foundItem;
                 }
-                //    var validquantitytoremove =
-                //        from e in _products
-                //        where e.GetQuantity() >= quantity
-                //        select e;
-
-                //    foreach (var element in validquantitytoremove)
-                //    {
-                //        if (element.GetProduct().GetId() == id)
-                //        {
-                //            element.SetQuantity(element.GetQuantity() - quantity);
-                //            return element;
-                //        }
-                //    }
-
-                //    //valid quantity given, not enough to remove, matching ID
-                //    var notenoughtoremove =
-                //        from e in _products
-                //        where e.GetQuantity() > quantity
-                //        select e;
-
-                //    foreach (var element in notenoughtoremove)
-                //    {
-                //        if (element.GetProduct().GetId() == id)
-                //        {
-                //            element.SetQuantity(0);
-                //            _products.Remove(element);
-                //            return element;
-                //        }
-                //    }
+                
             }
 
             return null;
