@@ -1,4 +1,5 @@
-﻿using CKK.Logic.Interfaces;
+﻿using CKK.Logic.Exceptions;
+using CKK.Logic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,27 +29,35 @@ namespace CKK.Logic.Models
 
         public ShoppingCartItem GetProductById(int id)
         {
-            var returnedwithId = 
+            if (id < 0)
+            {
+                throw new InvalidIdException();
+            }
+            else
+            {
+                var returnedwithId =
                 from e in _products
                 where e.Product.Id == id
                 select e;
 
-            if (returnedwithId.FirstOrDefault() != null)
-            {
-                return returnedwithId.FirstOrDefault();
+                if (returnedwithId.FirstOrDefault() != null)
+                {
+                    return returnedwithId.FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }
             }
-            else
-            {
-                return null;
-            }
+            
         }
 
-      
+
         public ShoppingCartItem AddProduct(Product prod, int quantity)
         {
             if (quantity <= 0)
             {
-                return null;
+                throw new InventoryItemStockTooLowException();
             }
             ShoppingCartItem foundItem = GetProductById(prod.Id);
 
@@ -76,7 +85,7 @@ namespace CKK.Logic.Models
             //invalid quantity given
             if (quantity <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException();
             }
 
             //valid quantity given, enough available to remove, and matching ID
@@ -84,19 +93,26 @@ namespace CKK.Logic.Models
             {
                 ShoppingCartItem foundItem = GetProductById(id);
 
-                if (foundItem.Quantity > quantity)
+                if (foundItem != null)
                 {
-                    foundItem.Quantity = foundItem.Quantity - quantity;
-                    return foundItem;
+                    if (foundItem.Quantity > quantity)
+                    {
+                        foundItem.Quantity = foundItem.Quantity - quantity;
+                        return foundItem;
+                    }
+                    if (foundItem.Quantity <= quantity)
+                    {
+                        quantity = foundItem.Quantity;
+                        foundItem.Quantity = foundItem.Quantity - quantity;
+                        _products.Remove(foundItem);
+                        return foundItem;
+                    }
                 }
-                if (foundItem.Quantity <= quantity)
+                if (foundItem == null)
                 {
-                    quantity = foundItem.Quantity;
-                    foundItem.Quantity = foundItem.Quantity - quantity;
-                    _products.Remove(foundItem);
-                    return foundItem;
+                    throw new ProductDoesNotExistException();
                 }
-                
+
             }
 
             return null;
@@ -107,7 +123,7 @@ namespace CKK.Logic.Models
             var results =
                 from e in _products
                 select e.GetTotal();
-            foreach(var item in results)
+            foreach (var item in results)
             {
                 return results.Sum();
             }

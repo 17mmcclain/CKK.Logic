@@ -1,4 +1,5 @@
-﻿using CKK.Logic.Models;
+﻿using CKK.Logic.Exceptions;
+using CKK.Logic.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,39 @@ namespace CKK.Logic.Interfaces
 {
     public abstract class InventoryItem
     {
-        public Product Product { get; set; }
-        public int Quantity {  get; set; }
+        private Product product;
+
+        public Product Product
+        {
+            get
+            {
+                return product;
+            }
+            set
+            {
+                product = value;
+            }
+        }
+        private int quantity;
+
+        public int Quantity
+        {
+            get
+            {
+                return quantity;
+            }
+            set
+            {
+                if (value < 0)
+                {
+                    throw new InventoryItemStockTooLowException();
+                }
+                else
+                {
+                    quantity = value;
+                }
+            }
+        }
     }
 }
+

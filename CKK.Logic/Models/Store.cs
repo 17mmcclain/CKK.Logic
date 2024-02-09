@@ -9,10 +9,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using CKK.Logic.Exceptions;
 
 namespace CKK.Logic.Models
 {
-    public class Store : Entity, IStore
+    public class Store : Entity , IStore
     {
         public List<StoreItem> _items = new List<StoreItem>();
 
@@ -20,11 +21,10 @@ namespace CKK.Logic.Models
         {
             //no quantity given, means nothing to add.
 
-            if (quantity <=0)
+            if (quantity <= 0)
             {
-                return null;
+                throw new InventoryItemStockTooLowException();
             }
-
             //elements in _items that are empty, meaning prod and quantity need added
             if (quantity > 0)
             {
@@ -42,47 +42,42 @@ namespace CKK.Logic.Models
                     _items.Add(newItem);
                     return newItem;
                 }
-            }  
+            }
             return null;
         }
 
         public StoreItem RemoveStoreItem(int id, int quantity)
         {
+            //invalid quantity given
             if (quantity <= 0)
             {
-                return null;
+                throw new ArgumentOutOfRangeException();
             }
 
             //valid quantity given, enough available to remove, and matching ID
-
-            var quantityvalid = 
-                from e in _items
-                where e.Quantity > 0 && e.Quantity >= quantity
-                select e;
-
-            foreach (var element in quantityvalid)
+            if (quantity > 0)
             {
-                if (element.Product.Id == id)
+                StoreItem foundItem = FindStoreItemById(id);
+                if (foundItem != null)
                 {
-                    element.Quantity = element.Quantity - quantity;
-                    return element;
+                    if (foundItem.Quantity > quantity)
+                    {
+                        foundItem.Quantity = foundItem.Quantity - quantity;
+                        return foundItem;
+                    }
+                    if (foundItem.Quantity <= quantity)
+                    {
+                        quantity = foundItem.Quantity;
+                        foundItem.Quantity = foundItem.Quantity - quantity;
+                        // _items.Remove(foundItem);
+                        return foundItem;
+                    }
                 }
-            }
-
-            //valid quantity given, but not enough to remove??
-
-            var itemsabovegivenquantity =
-                from e in _items
-                where e.Quantity < quantity 
-                select e;
-
-            foreach (var element in itemsabovegivenquantity)
-            {
-                if (element.Product.Id == id)
+                if (foundItem == null)
                 {
-                    element.Quantity = 0;
-                    return element;
+                    throw new ProductDoesNotExistException();
                 }
+
             }
             return null;
         }
@@ -94,19 +89,27 @@ namespace CKK.Logic.Models
 
         public StoreItem FindStoreItemById(int id)
         {
-            var returnedResult = 
+            if (id < 0)
+            {
+                throw new InvalidIdException();
+            }
+            else
+            {
+                var returnedResult =
                 from e in _items
                 where e.Product.Id == id
                 select e;
-            
-            if (returnedResult.FirstOrDefault() != null)
-            {
-                return returnedResult.FirstOrDefault();
+
+                if (returnedResult.FirstOrDefault() != null)
+                {
+                    return returnedResult.FirstOrDefault();
+                }
+                else
+                {
+                    return null;
+                }
             }
-            return null;
-            
         }
-
-
     }
 }
+

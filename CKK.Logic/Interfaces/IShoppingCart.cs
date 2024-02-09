@@ -21,8 +21,7 @@ namespace CKK.Logic.Interfaces
         public ShoppingCartItem RemoveProduct(int id, int quantity);
 
         public decimal GetTotal();
-        
 
-    public List<ShoppingCartItem> GetProducts();
+        public List<ShoppingCartItem> GetProducts();
     }
 }
