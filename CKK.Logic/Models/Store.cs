@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CKK.Logic.Models
 {
-    public class Store : Entity
+    public class Store : Entity, IStore
     {
         public List<StoreItem> _items = new List<StoreItem>();
 
