@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CKK.Logic", "CKK.Logic\CKK.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CKK.Tests", "CKK.Tests\CKK.Tests.csproj", "{13F8305F-E7EE-4AFB-991F-93D745809ABC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D06F60D1-E4B6-4515-8827-644B06C6A0C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "ConsoleApp1\ConsoleApp1.csproj", "{D06F60D1-E4B6-4515-8827-644B06C6A0C5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventoryManagementForm", "InventoryManagementForm\InventoryManagementForm.csproj", "{21FA7E87-4A10-478E-BAF1-F8C85E7DBBB2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{D06F60D1-E4B6-4515-8827-644B06C6A0C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D06F60D1-E4B6-4515-8827-644B06C6A0C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D06F60D1-E4B6-4515-8827-644B06C6A0C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21FA7E87-4A10-478E-BAF1-F8C85E7DBBB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21FA7E87-4A10-478E-BAF1-F8C85E7DBBB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21FA7E87-4A10-478E-BAF1-F8C85E7DBBB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21FA7E87-4A10-478E-BAF1-F8C85E7DBBB2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

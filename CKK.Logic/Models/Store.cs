@@ -19,7 +19,17 @@ namespace CKK.Logic.Models
 
         public StoreItem AddStoreItem(Product prod, int quantity)
         {
-            //no quantity given, means nothing to add.
+            if (prod.Id == 0)
+            {
+                Random rand = new Random();
+                int newId = rand.Next();
+                if (newId != 0)
+                {
+                    prod.Id = newId;
+                }
+            }
+
+            //no quantity given, means nothing to add
 
             if (quantity <= 0)
             {
@@ -80,6 +90,15 @@ namespace CKK.Logic.Models
 
             }
             return null;
+        }
+
+        public void DeleteStoreItem(int id)
+        {
+            StoreItem foundItem = FindStoreItemById(id);
+            if (foundItem != null)
+            {
+                _items.Remove(foundItem);
+            }
         }
 
         public List<StoreItem> GetStoreItems()
