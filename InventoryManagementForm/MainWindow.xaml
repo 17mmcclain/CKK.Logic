@@ -5,10 +5,97 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventoryManagementForm"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="1024" Width="1440">
 
     <Grid>
-        <ListBox x:Name="_1bInventoryList" d:ItemsSource="{d:SampleData ItemCount=5}" Margin="0,77,0,0"/>
-
+        <TextBlock HorizontalAlignment="Center" Margin="0,41,0,0" TextWrapping="Wrap" Text="Corey's Knick Knacks" VerticalAlignment="Top" Foreground="#FF456D32" FontSize="54" FontWeight="Bold" FontFamily="Sitka Heading" Width="534" Height="65"/>
+        <Separator HorizontalAlignment="Center" Margin="0,162,0,0" VerticalAlignment="Top" Height="2" RenderTransformOrigin="0.5,0.5" Width="1360" Foreground="#FF456D32">
+            <Separator.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="-1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Separator.RenderTransform>
+        </Separator>
+        <TextBox x:Name="SearchInventoryTextBox" HorizontalAlignment="Left" Margin="40,210,0,0" TextWrapping="Wrap" Text="Search Inventory" VerticalAlignment="Top" Width="305" Height="48" FontSize="20" BorderBrush="#FF456D32" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="SearchInventoryTextBox_TextChanged">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <Button x:Name="AddNewInventoryButton" Content="Add New Inventory Item" HorizontalAlignment="Left" Margin="1129,291,0,0" VerticalAlignment="Top" Click="AddNewInventoryItem_Click" Width="271" Height="51" Background="#FF456D32" Foreground="White">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="11"></Setter>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="RemoveInventoryItemButton" Content="Remove Inventory Item" HorizontalAlignment="Left" Margin="1129,365,0,0" VerticalAlignment="Top" Click="RemoveInventoryItemButton_Click" Width="271" Height="51" Background="#FF456D32" Foreground="White">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="EditButton" Content="Edit" HorizontalAlignment="Left" Margin="1129,441,0,0" VerticalAlignment="Top" Click="EditButton_Click" Width="271" Height="51" Background="#FF456D32" Foreground="White">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <Button x:Name="LogOutButton" Content="Log Out" HorizontalAlignment="Left" Margin="1129,909,0,0" VerticalAlignment="Top" Click="LogOut_Click" Width="271" Height="51" Background="#FF456D32" Foreground="White">
+            <Button.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </Button.Resources>
+        </Button>
+        <TextBox x:Name="InventoryIDTextBox" HorizontalAlignment="Left" Margin="40,294,0,0" TextWrapping="Wrap" Text="Inventory ID" VerticalAlignment="Top" Width="245" Height="48" FontSize="20" BorderBrush="#FF456D32" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="SearchInventoryTextBox_TextChanged" GotFocus="InventoryIDTextBox_GotFocus">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="NameDescriptionTextBox" HorizontalAlignment="Left" Margin="339,294,0,0" TextWrapping="Wrap" Text="Name/Description" VerticalAlignment="Top" Width="326" Height="48" FontSize="20" BorderBrush="#FF456D32" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="SearchInventoryTextBox_TextChanged" GotFocus="NameDescriptionTextBox_GotFocus">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="QuantityTextBox" HorizontalAlignment="Left" Margin="720,294,0,0" TextWrapping="Wrap" Text="Quantity" VerticalAlignment="Top" Width="156" Height="48" FontSize="20" BorderBrush="#FF456D32" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="SearchInventoryTextBox_TextChanged" GotFocus="QuantityTextBox_GotFocus">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <TextBox x:Name="PriceTextBox" HorizontalAlignment="Left" Margin="938,294,0,0" TextWrapping="Wrap" Text="Price" VerticalAlignment="Top" Width="156" Height="48" FontSize="20" BorderBrush="#FF456D32" VerticalContentAlignment="Center" TextAlignment="Center" TextChanged="SearchInventoryTextBox_TextChanged" GotFocus="PriceTextBox_GotFocus">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <ListView x:Name="_1bInventoryList" Margin="40,365,346,48">
+            <ListView.View>
+                <GridView>
+                    <GridView.ColumnHeaderContainerStyle>
+                        <Style>
+                            <Setter Property="TextElement.FontSize" Value="20"/>
+                        </Style>
+                    </GridView.ColumnHeaderContainerStyle>
+                    <GridViewColumn Header="Inventory ID" DisplayMemberBinding="{Binding Product.Id}" Width="276"/>
+                    <GridViewColumn Header="Name/Description" DisplayMemberBinding="{Binding Product.Name}" Width="326"/>
+                    <GridViewColumn Header="Quantity" DisplayMemberBinding="{Binding Quantity}" Width="226"/>
+                    <GridViewColumn Header="Price" DisplayMemberBinding="{Binding Product.Price}" Width="226"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
     </Grid>
 </Window>

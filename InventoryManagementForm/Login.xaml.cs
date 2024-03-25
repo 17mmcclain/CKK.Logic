@@ -11,6 +11,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using CKK.Logic.Interfaces;
+using CKK.Logic.Models;
 
 namespace InventoryManagementForm
 {
@@ -19,9 +21,26 @@ namespace InventoryManagementForm
     /// </summary>
     public partial class Login : Window
     {
+       
         public Login()
         {
             InitializeComponent();
+           
+        }
+
+        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+
+        }
+
+        private void LoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (UsernameTextBox.Text != "" && PasswordTextbox.Text != "")
+            {
+                MainWindow newMainWindowobj = new MainWindow();
+                newMainWindowobj.Show();
+                this.Close();
+            }
         }
     }
 }

@@ -7,8 +7,8 @@
         mc:Ignorable="d"
         Title="Login" Height="1024" Width="1440">
     <Grid Width="1440" Height="1024">
-        <TextBlock HorizontalAlignment="Center" Margin="0,10,0,0" TextWrapping="Wrap" Text="Corey's Knick Knacks" VerticalAlignment="Top" Foreground="#FF456D32" FontSize="54" FontWeight="Bold" FontFamily="Sitka Heading" Width="534" Height="65"/>
-        <Separator HorizontalAlignment="Center" Margin="0,83,0,0" VerticalAlignment="Top" Height="1" RenderTransformOrigin="0.5,0.5" Width="1359" Foreground="#FF456D32">
+        <TextBlock HorizontalAlignment="Center" Margin="0,41,0,0" TextWrapping="Wrap" Text="Corey's Knick Knacks" VerticalAlignment="Top" Foreground="#FF456D32" FontSize="54" FontWeight="Bold" FontFamily="Sitka Heading" Width="534" Height="65"/>
+        <Separator HorizontalAlignment="Center" Margin="0,162,0,0" VerticalAlignment="Top" Height="2" RenderTransformOrigin="0.5,0.5" Width="1360" Foreground="#FF456D32">
             <Separator.RenderTransform>
                 <TransformGroup>
                     <ScaleTransform ScaleY="-1"/>
@@ -18,15 +18,30 @@
                 </TransformGroup>
             </Separator.RenderTransform>
         </Separator>
-        <TextBlock HorizontalAlignment="Center" Margin="0,102,0,0" TextWrapping="Wrap" Text="Please Sign In" VerticalAlignment="Top" FontWeight="Bold" FontSize="16"/>
-        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="223" Margin="224,142,0,0" VerticalAlignment="Top" Width="335" CornerRadius="12,12,12,12"/>
-        <TextBox HorizontalAlignment="Left" Margin="260,192,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="262" SnapsToDevicePixels="True" Height="25">
+        <TextBlock HorizontalAlignment="Center" Margin="0,230,0,0" TextWrapping="Wrap" Text="Please Sign In" VerticalAlignment="Top" FontWeight="Bold" FontSize="32"/>
+        <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Left" Height="464" Margin="386,310,0,0" VerticalAlignment="Top" Width="630" CornerRadius="12,12,12,12"/>
+        <TextBox x:Name="UsernameTextBox" HorizontalAlignment="Left" Margin="439,381,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="521" SnapsToDevicePixels="True" Height="61" FontSize="36" BorderBrush="#FF456D32">
             <TextBox.Resources>
                 <Style TargetType="{x:Type Border}">
                     <Setter Property="CornerRadius" Value="11"/>
                 </Style>
             </TextBox.Resources>
         </TextBox>
-
+        <Label Content="Username" HorizontalAlignment="Left" Margin="439,344,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <TextBox x:Name="PasswordTextbox" HorizontalAlignment="Left" Margin="439,542,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="521" SnapsToDevicePixels="True" Height="61" FontSize="36" BorderBrush="#FF456D32">
+            <TextBox.Resources>
+                <Style TargetType="{x:Type Border}">
+                    <Setter Property="CornerRadius" Value="11"/>
+                </Style>
+            </TextBox.Resources>
+        </TextBox>
+        <Label Content="Password" HorizontalAlignment="Left" Margin="439,505,0,0" VerticalAlignment="Top" FontSize="20"/>
+        <Button x:Name="LoginButton" Content="Login" HorizontalAlignment="Left" Margin="439,668,0,0" VerticalAlignment="Top" Width="521" Height="51" FontSize="24" Background="#FF456D32" Foreground="White" Click="LoginButton_Click">
+            <Button.Resources>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="11"></Setter>
+                </Style>
+            </Button.Resources>
+        </Button>
     </Grid>
 </Window>
